@@ -1,0 +1,27 @@
+# WireGuard server interface config
+# Location: /etc/wireguard/wg0.conf
+#
+# This is a sanitized template. Replace every placeholder below
+# with your own generated keys and values before use.
+#
+# Generate a keypair with:
+#   wg genkey | tee privatekey | wg pubkey > publickey
+
+[Interface]
+PrivateKey = YOUR_SERVER_PRIVATE_KEY_HERE
+Address = 10.10.10.1/24
+ListenPort = 51820
+SaveConfig = false
+
+# Replace ens18 with your VM's actual network interface name (check with `ip a`)
+PostUp = iptables -A FORWARD -i wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o ens18 -j MASQUERADE
+PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -o ens18 -j MASQUERADE
+
+# One [Peer] block per client device. Add more blocks to support
+# additional devices (laptop, phone, etc.) — each needs a unique
+# keypair and a unique /32 address inside the 10.10.10.0/24 range.
+
+[Peer]
+# Client: Windows laptop (example)
+PublicKey = YOUR_CLIENT_PUBLIC_KEY_HERE
+AllowedIPs = 10.10.10.2/32

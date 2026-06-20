@@ -1,0 +1,10 @@
+# Cron entry for cf-ddns.sh
+#
+# Install with: sudo crontab -e
+# Then paste the line below.
+#
+# Runs every 10 minutes. The script itself only calls the Cloudflare
+# API when the IP has actually changed, so this doesn't spam the API
+# on every run — it's a cheap, safe interval.
+
+*/10 * * * * /usr/local/bin/cf-ddns.sh

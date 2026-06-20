@@ -1,0 +1,36 @@
+# WireGuard client config — Windows (WireGuard for Windows app)
+# File: HomeVPN.conf — import directly into the WireGuard app
+#
+# This is the WORKING split-tunnel version. See the note below for
+# why this isn't a full-tunnel (0.0.0.0/0) config.
+
+[Interface]
+PrivateKey = YOUR_CLIENT_PRIVATE_KEY_HERE
+Address = 10.10.10.2/24
+DNS = 1.1.1.1
+
+[Peer]
+PublicKey = YOUR_SERVER_PUBLIC_KEY_HERE
+
+# Use your own Dynamic DNS hostname here instead of a raw IP, so the
+# client config survives your home connection's IP changing. See the
+# /ddns folder in this repo for the Cloudflare auto-update script.
+Endpoint = vpn.yourdomain.com:51820
+
+# --- THE KEY FIX ---
+# AllowedIPs controls which destination traffic gets routed through
+# the tunnel. This must list ONLY the VPN subnet and your home LAN
+# subnet — not 0.0.0.0/0.
+#
+# With AllowedIPs = 0.0.0.0/0 (full tunnel), the WireGuard handshake
+# completes and the tunnel shows "active", but ALL traffic — including
+# traffic meant for the local network — gets routed into the tunnel.
+# This broke reachability to every device on the home LAN, including
+# the WireGuard server VM itself.
+#
+# Scoping AllowedIPs to just the relevant subnets fixed it: general
+# internet traffic stays on the normal connection, and only traffic
+# for the VPN subnet or home LAN gets tunneled.
+AllowedIPs = 10.10.10.0/24, 192.168.1.0/24
+
+PersistentKeepalive = 25
