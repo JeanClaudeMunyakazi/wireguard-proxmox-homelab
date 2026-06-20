@@ -27,8 +27,8 @@ Proxmox VE host (bare metal)
                └── updates vpn.yourdomain.com → current public IP via Cloudflare API
 ```
 
-A Windows client connects to `vpn.yourdomain.com:51820`, and — once
-inside the tunnel — can reach any device on the home LAN, including
+A Windows client connects to `vpn.yourdomain.com:51820`, and, once
+inside the tunnel, can reach any device on the home LAN, including
 when a second VPN (e.g. a public-WiFi security client) is also active.
 
 ## What's in this repo
@@ -38,24 +38,24 @@ when a second VPN (e.g. a public-WiFi security client) is also active.
 | `server/wg0.conf.example` | WireGuard server interface config |
 | `server/ufw-rules.sh` | Firewall setup, including the forward-policy fix |
 | `server/sysctl-forwarding.conf` | IP forwarding required for routing |
-| `client/HomeVPN.conf.example` | Windows client config — the working split-tunnel version |
+| `client/HomeVPN.conf.example` | Windows client config, the working split-tunnel version |
 | `ddns/cf-ddns.sh` | Cloudflare Dynamic DNS update script |
 | `ddns/crontab.txt` | Cron schedule for the DDNS script |
 
-All files are sanitized templates — every key, token, and IP-specific
+All files are sanitized templates, every key, token, and IP-specific
 value is a placeholder. Replace them with your own before use.
 
 ## The core problem this solves
 
 **Tailscale's mesh VPN worked perfectly on the home network, but failed
 silently the moment a second VPN client took over the network's routing
-on public WiFi.** No error, no logs pointing at the cause — just a dead
+on public WiFi.** No error, no logs pointing at the cause, just a dead
 tunnel. With no split-tunneling option available to exempt Tailscale's
 traffic, and security policy ruling out disabling the public-WiFi VPN,
 Tailscale was no longer viable as the remote-access method.
 
 WireGuard's advantage here: it runs on a single, predictable UDP port,
-independent of whatever else is active on the network stack — so it
+independent of whatever else is active on the network stack, so it
 can run *underneath* another VPN instead of competing with it.
 
 ## The routing bug (and the actual fix)
@@ -71,7 +71,7 @@ unreachable. Two separate issues, found in order:
    See `server/ufw-rules.sh`.
 
 2. **The client's `AllowedIPs` was set to `0.0.0.0/0` (full tunnel).**
-   This routes *all* traffic — including LAN-bound traffic — into the
+   This routes *all* traffic, including LAN-bound traffic, into the
    tunnel, which broke local reachability entirely. Scoping it down to
    `10.10.10.0/24, 192.168.1.0/24` (VPN subnet + home LAN only) fixed
    it immediately. See the inline comments in
@@ -79,7 +79,7 @@ unreachable. Two separate issues, found in order:
 
 Confirmed working via `sudo wg show` (showing an active handshake with
 real bidirectional data transfer) and live pings to LAN devices through
-the tunnel — including with Avast SecureLine active and geo-located
+the tunnel, including with Avast SecureLine active and geo-located
 outside Germany.
 
 ## Setup order
