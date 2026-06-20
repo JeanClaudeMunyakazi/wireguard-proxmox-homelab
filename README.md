@@ -1,4 +1,4 @@
-# WireGuard VPN on Proxmox — Homelab Project
+# WireGuard VPN on Proxmox - Homelab Project
 
 A self-hosted WireGuard VPN server, built to solve a real problem: Tailscale
 silently failed to connect whenever a second VPN (Avast SecureLine) was
@@ -60,7 +60,7 @@ can run *underneath* another VPN instead of competing with it.
 
 ## The routing bug (and the actual fix)
 
-The trickiest part of this build wasn't installing WireGuard — it was
+The trickiest part of this build wasn't installing WireGuard, it was
 diagnosing why the tunnel connected but local devices were still
 unreachable. Two separate issues, found in order:
 
